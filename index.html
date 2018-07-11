@@ -1,0 +1,66 @@
+<!doctype html>
+
+<head>
+  <meta charset="utf-8">
+  <title>ATL Restaurants</title>
+  <!-- Bootstrap CSS CDN -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <div class="wrapper">
+
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <!-- Sidebar Header -->
+      <div class="sidebar-header">
+        <h3 class="media-heading title">ATL Restaurants</h3>
+      </div>
+
+      <!-- Sidebar Links -->
+      <div style="text-align: center; padding-top: 15px;">
+        <label> Category:
+        <select data-bind="options: categories, value: selected" style="color: black;">
+        </select>
+        </label>
+      </div>
+      <ul class="list-unstyled components" data-bind="foreach: locations">
+        <li>
+          <a href="#" data-bind="text: name, click: $parent.setLocation"></a>
+        </li> 
+      </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <div id="content">
+      <nav class="navbar navbar-fixed-top navbar-default" style="position:relative; padding:0px;">
+        <div class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="btn btn-primary-outline navbar-btn navbar-left">
+            <i class="glyphicon glyphicon-menu-hamburger"></i>
+          </button>
+        </div>
+      </nav>
+        <div id="map"></div>
+    </div>
+
+  </div>
+</body>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+  crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+  crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+  crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+<script src="js/app.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCHGY2YWKkYIeaOaaXdJIpgKJqcSwrjkfk&callback=initApp">
+</script>
+</html>
