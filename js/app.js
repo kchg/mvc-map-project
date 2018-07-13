@@ -1,12 +1,11 @@
 $(document).ready(function () {
-
+    // Hamburger Menu functionality
     $('#sidebarCollapse').on('click', function () {
         $('#sidebar').toggleClass('active');
     });
-
 });
 
-//Class to represent a location
+// Class to represent a restaurant location
 function Location(details) {
     var self = this;
     self.name = details.name;
@@ -15,7 +14,6 @@ function Location(details) {
     self.category = details.category;
     self.id = details.id;
 };
-
 
 var ViewModel = function () {
     var self = this;
@@ -40,7 +38,6 @@ var ViewModel = function () {
         {name: "Nam Phuong Restaurant", category: "Vietnamese", id: "4de0483522713271e2b0d2b4", location: {lat:33.861161, lng:-84.307604}}
     ];
 
-
     var locations_array = []
     for (var i = 0; i < self.restaurants.length; i++) {
         locations_array.push(new Location(self.restaurants[i]))
@@ -50,11 +47,9 @@ var ViewModel = function () {
     self.categories = ko.observableArray(['All', "American", "Japanese", "Korean", "Vietnamese"]);
     self.selected = ko.observable(self.categories()[0]);
     
-    
-
+    // Filter
     self.selected.subscribe(function(newValue) {
         largeInfowindow.close()
-
         self.locations.removeAll()
         for (var i = 0; i < self.restaurants.length; i++) {
             category = self.restaurants[i].category;
@@ -78,6 +73,7 @@ var ViewModel = function () {
         map.fitBounds(bounds);
     });
 
+    // Create a Google Maps marker for each restaurant
     for (var i = 0; i < self.restaurants.length; i++){
         var position = self.restaurants[i].location;
         var title = self.restaurants[i].name;
@@ -99,8 +95,6 @@ var ViewModel = function () {
     }
     map.fitBounds(bounds);
 
-
-
     self.setLocation = function(location) {
         markers.forEach(function(marker) {
             if (marker.title === location.name) {
@@ -111,15 +105,14 @@ var ViewModel = function () {
 
 };
 
-// cache the foursquare response if the same venue is chosen twice
+// cache the foursquare response if the same venue is chosen repeatedly
 self.cache = {}
 
+// Populate infowindow with restaurant data on selection
 function populateInfoWindow(marker, infowindow) {
-
     // Enrich with Foursquare data
     if (infowindow.marker != marker) {
         infowindow.marker = marker;
-
         if (marker.id in self.cache) {
             console.log("Using cached Foursquare API response")
             success(self.cache[marker.id])
@@ -129,10 +122,8 @@ function populateInfoWindow(marker, infowindow) {
             client_id = "T1EQSRA5LX0DMOQ14MZNJJAEX5GTAGZXIRZAKTO41MQFTK0U";
             client_secret = "NUFEWYMAVBIRTDXWCWZKT0JFWYSLZBT2YD4OZJVEVZBKU5GP";
             var uri = 'https://api.foursquare.com/v2/venues/' + marker.id + '?client_id=' + client_id + '&client_secret=' + client_secret + '&v=20180704';
-            // Foursquare API
             $.getJSON(uri).done(success
             ).fail(function() {
-                // Send alert
                 alert(
                     "There was an issue loading the Foursquare API."
                 );
@@ -161,7 +152,6 @@ function populateInfoWindow(marker, infowindow) {
             self.cache[marker.id] = data
         }
 
-        // infowindow.setContent('<div>' + marker.title + '</div>')
         infowindow.open(map, marker);
         infowindow.addListener('closeclick', function() {
             infowindow.setMarker(null);
@@ -171,10 +161,8 @@ function populateInfoWindow(marker, infowindow) {
     // Bounces twice on selection
     marker.setAnimation(google.maps.Animation.BOUNCE);
     marker.setAnimation(4);
-
 }
 
 function initApp() {
-    console.log('in  init');
     ko.applyBindings(new ViewModel());
 }
