@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 $(document).ready(function () {
     // Hamburger Menu functionality
     $('#sidebarCollapse').on('click', function () {
@@ -13,7 +14,19 @@ function Location(details) {
     self.longitude = details.location.longitude;
     self.category = details.category;
     self.id = details.id;
-};
+}
+
+// Types of food: American, Korean, Japanese, Vietnamese
+restaurants = [
+    {name: "The Vortex Bar & Grill", category: "American", id: "4387a580f964a520062b1fe3", location: {lat:33.778702, lng:-84.384290}},
+    {name: "B's Cracklin' Barbecue", category: "American", id: "57dc6d45498e4bf3f5fcb601", location: {lat:33.812053, lng:-84.472083}},
+    {name: "Jinya Ramen Bar", category: "Japanese", id: "597b6aaeb2958f7e5242c4dd" , location: {lat:33.856584, lng:-84.382726}},
+    {name: "Kula Revolving Sushi Bar", category: "Japanese", id: "596f7f8c0d2be7101e37c1e3", location: {lat:33.907699, lng:-84.288033}},
+    {name: "Breaker's Korean BBQ", category: "Korean", id: "54bd8c82498e4279526f1494", location: {lat:33.957061, lng:-84.129167}},
+    {name: "Woo Nam Jeong Stone Bowl House", category: "Korean", id: "4b6dfe10f964a520c2a12ce3", location: {lat:33.912819, lng:-84.261869}},
+    {name: "Lee's Bakery", category: "Vietnamese", id: "4a6a17b3f964a5209dcc1fe3", location: {lat:33.859944, lng:-84.308550}},
+    {name: "Nam Phuong Restaurant", category: "Vietnamese", id: "4de0483522713271e2b0d2b4", location: {lat:33.861161, lng:-84.307604}}
+];
 
 var ViewModel = function () {
     var self = this;
@@ -22,25 +35,14 @@ var ViewModel = function () {
         zoom: 14
     });
 
-    var markers = []
+    var markers = [];
     var largeInfowindow = new google.maps.InfoWindow();
     var bounds = new google.maps.LatLngBounds();
 
-    // Types of food: American, Korean, Japanese, Vietnamese
-    self.restaurants = [
-        {name: "The Vortex Bar & Grill", category: "American", id: "4387a580f964a520062b1fe3", location: {lat:33.778702, lng:-84.384290}},
-        {name: "B's Cracklin' Barbecue", category: "American", id: "57dc6d45498e4bf3f5fcb601", location: {lat:33.812053, lng:-84.472083}},
-        {name: "Jinya Ramen Bar", category: "Japanese", id: "597b6aaeb2958f7e5242c4dd" , location: {lat:33.856584, lng:-84.382726}},
-        {name: "Kula Revolving Sushi Bar", category: "Japanese", id: "596f7f8c0d2be7101e37c1e3", location: {lat:33.907699, lng:-84.288033}},
-        {name: "Breaker's Korean BBQ", category: "Korean", id: "54bd8c82498e4279526f1494", location: {lat:33.957061, lng:-84.129167}},
-        {name: "Woo Nam Jeong Stone Bowl House", category: "Korean", id: "4b6dfe10f964a520c2a12ce3", location: {lat:33.912819, lng:-84.261869}},
-        {name: "Lee's Bakery", category: "Vietnamese", id: "4a6a17b3f964a5209dcc1fe3", location: {lat:33.859944, lng:-84.308550}},
-        {name: "Nam Phuong Restaurant", category: "Vietnamese", id: "4de0483522713271e2b0d2b4", location: {lat:33.861161, lng:-84.307604}}
-    ];
 
-    var locations_array = []
-    for (var i = 0; i < self.restaurants.length; i++) {
-        locations_array.push(new Location(self.restaurants[i]))
+    var locations_array = [];
+    for (var i = 0; i < restaurants.length; i++) {
+        locations_array.push(new Location(restaurants[i]));
     }
 
     self.locations = ko.observableArray(locations_array);
@@ -49,17 +51,18 @@ var ViewModel = function () {
     
     // Filter
     self.selected.subscribe(function(newValue) {
-        largeInfowindow.close()
-        self.locations.removeAll()
-        for (var i = 0; i < self.restaurants.length; i++) {
-            category = self.restaurants[i].category;
+        var i = 0;
+        largeInfowindow.close();
+        self.locations.removeAll();
+        for (i = 0; i < restaurants.length; i++) {
+            category = restaurants[i].category;
             if (newValue === "All" || category === newValue) {
-                self.locations.push(new Location(self.restaurants[i]));
+                self.locations.push(new Location(restaurants[i]));
             }
         }
 
         var bounds = new google.maps.LatLngBounds();
-        for (var i = 0; i < markers.length; i++) {
+        for (i = 0; i < markers.length; i++) {
             marker = markers[i];
             if (newValue === "All" || marker.category === newValue) {
                 marker.setMap(map);
@@ -74,11 +77,11 @@ var ViewModel = function () {
     });
 
     // Create a Google Maps marker for each restaurant
-    for (var i = 0; i < self.restaurants.length; i++){
-        var position = self.restaurants[i].location;
-        var title = self.restaurants[i].name;
-        var category = self.restaurants[i].category;
-        var id = self.restaurants[i].id;
+    for (i = 0; i < restaurants.length; i++){
+        var position = restaurants[i].location;
+        var title = restaurants[i].name;
+        var category = restaurants[i].category;
+        var id = restaurants[i].id;
         var marker = new google.maps.Marker({
             map: map,
             position: position,
@@ -91,7 +94,7 @@ var ViewModel = function () {
         bounds.extend(marker.position);
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
-        })
+        });
     }
     map.fitBounds(bounds);
 
@@ -100,13 +103,13 @@ var ViewModel = function () {
             if (marker.title === location.name) {
                 populateInfoWindow(marker, largeInfowindow);
             }
-        })
+        });
     };
 
 };
 
 // cache the foursquare response if the same venue is chosen repeatedly
-self.cache = {}
+self.cache = {};
 
 // Populate infowindow with restaurant data on selection
 function populateInfoWindow(marker, infowindow) {
@@ -114,8 +117,8 @@ function populateInfoWindow(marker, infowindow) {
     if (infowindow.marker != marker) {
         infowindow.marker = marker;
         if (marker.id in self.cache) {
-            console.log("Using cached Foursquare API response")
-            success(self.cache[marker.id])
+            console.log("Using cached Foursquare API response");
+            success(self.cache[marker.id]);
         }
         else {
             console.log("Getting Foursquare API response");
@@ -128,10 +131,10 @@ function populateInfoWindow(marker, infowindow) {
                     "There was an issue loading the Foursquare API."
                 );
             });
-        };
+        }
 
         function success(data) {
-            console.log(data)
+            console.log(data);
             var venue = data.response.venue;
             address = venue.location.formattedAddress;
             rating = venue.rating;
@@ -149,7 +152,7 @@ function populateInfoWindow(marker, infowindow) {
             </div>
             `;
             infowindow.setContent(info_html);
-            self.cache[marker.id] = data
+            self.cache[marker.id] = data;
         }
 
         infowindow.open(map, marker);
@@ -165,4 +168,8 @@ function populateInfoWindow(marker, infowindow) {
 
 function initApp() {
     ko.applyBindings(new ViewModel());
+}
+
+function googleError() {
+    alert("There was an issue loading the Google Maps API");
 }
